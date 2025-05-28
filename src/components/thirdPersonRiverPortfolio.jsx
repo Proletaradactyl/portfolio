@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 const ThirdPersonRiverPortfolio = () => {
-  const [boatPosition, setBoatPosition] = useState({ x: 50, y: 50 });
+  const [boatPosition, setBoatPosition] = useState({ x: 50, y: 80 });
   const [activeSection, setActiveSection] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [boatSpeed, setBoatSpeed] = useState(2);
@@ -28,7 +28,7 @@ const ThirdPersonRiverPortfolio = () => {
       id: 'about',
       name: 'About Me',
       icon: <User />,
-      position: { x: 20, y: 15 }, // moved higher
+      position: { x: 33.33, y: 10 }, // align with left river bank
       side: 'left',
       building: {
         type: 'cabin',
@@ -50,7 +50,7 @@ const ThirdPersonRiverPortfolio = () => {
       id: 'projects',
       name: 'Projects',
       icon: <Briefcase />,
-      position: { x: 70, y: 30 }, // moved lower
+      position: { x: 70, y: 60 }, // moved lower
       side: 'right',
       building: {
         type: 'workshop',
@@ -61,7 +61,7 @@ const ThirdPersonRiverPortfolio = () => {
       id: 'contact',
       name: 'Contact',
       icon: <Mail />,
-      position: { x: 80, y: 75 }, // moved lower
+      position: { x: 66, y: 20 }, // moved lower
       side: 'right',
       building: {
         type: 'post',
@@ -72,11 +72,11 @@ const ThirdPersonRiverPortfolio = () => {
       id: 'home',
       name: 'Home',
       icon: <Home />,
-      position: { x: 50, y: 75 }, // stays near bottom
+      position: { x: 50, y: 80 }, // stays near bottom
       side: 'bottom',
       building: {
         type: 'dock',
-        color: 'bg-gradient-to-t from-slate-800 to-slate-600',
+        color: 'bg-gradient-to-t from-slate-700 to-slate-500',
       },
     },
   ];
@@ -160,12 +160,34 @@ const ThirdPersonRiverPortfolio = () => {
   }, [boatPosition, boatSpeed]);
 
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Get bounding rect of the main container
+      const container = document.body;
+      const rect = container.getBoundingClientRect();
+
+      // Calculate mouse position as percentage of viewport
+      const mouseX = ((e.clientX - rect.left) / rect.width) * 100;
+      const mouseY = ((e.clientY - rect.top) / rect.height) * 100;
+
+      // Clamp to river boundaries
+      const clampedX = Math.max(riverLeft, Math.min(mouseX, riverRight));
+      const clampedY = Math.max(5, Math.min(mouseY, 95));
+
+      setBoatPosition({ x: clampedX, y: clampedY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [riverLeft, riverRight]);
+
+  useEffect(() => {
     const nearbyLandmark = landmarks.find((landmark) => {
       const distance = Math.sqrt(
         Math.pow(landmark.position.x - boatPosition.x, 2) +
           Math.pow(landmark.position.y - boatPosition.y, 2)
       );
-      return distance < 12;
+      return distance < 8;
     });
 
     setActiveSection(nearbyLandmark?.id || null);
@@ -220,7 +242,7 @@ const ThirdPersonRiverPortfolio = () => {
           style={{
             left: `${tree.baseX}%`,
             top: `${tree.y}%`,
-            zIndex: Math.floor(tree.y),
+            zIndex: 20,
             transform: 'translateY(-100%)',
             animation: `sway ${3 + tree.sway}s ease-in-out infinite alternate`,
           }}
@@ -268,11 +290,11 @@ const ThirdPersonRiverPortfolio = () => {
     return landmarks.map((landmark) => {
       let left;
       if (landmark.side === 'left') {
-        left = '33%'; // Just off the left bank
+        left = '33%';
       } else if (landmark.side === 'right') {
-        left = '67%'; // Just off the right bank
+        left = '67%';
       } else {
-        left = '50%'; // For bottom/home, center
+        left = '50%';
       }
 
       const isActive = activeSection === landmark.id;
@@ -280,19 +302,22 @@ const ThirdPersonRiverPortfolio = () => {
       return (
         <div
           key={`building-${landmark.id}`}
-          className='absolute transform -translate-x-1/2'
+          className='absolute transform -translate-x-1/2 z-20 cursor-pointer group'
           style={{
             left,
             top: `${landmark.position.y}%`,
-            zIndex: Math.floor(landmark.position.y) + 10,
           }}
+
+          tabIndex={0}
+          role="button"
+          aria-label={landmark.name}
         >
           <div className='flex flex-col items-center'>
             {/* Enhanced building with roof */}
             <div
-              className={`w-3 h-3 ${
+              className={`${
                 landmark.building.color
-              } transform rotate-45 mb-1 ${isActive ? 'animate-pulse' : ''}`}
+              } ${isActive ? 'animate-pulse' : ''}`}
             ></div>
             <div
               className={`${
@@ -303,14 +328,8 @@ const ThirdPersonRiverPortfolio = () => {
                              ? 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse'
                              : ''
                          }
-                         hover:scale-105 transition-transform duration-300`}
+                         group-hover:scale-105 hover:scale-105 transition-transform duration-300`}
             >
-              {/* Windows */}
-              <div className='absolute top-2 left-2 w-2 h-2 bg-yellow-200 dark:bg-yellow-300 rounded opacity-80'></div>
-              <div className='absolute top-2 right-2 w-2 h-2 bg-yellow-200 dark:bg-yellow-300 rounded opacity-80'></div>
-              <div className='absolute top-6 left-2 w-2 h-2 bg-yellow-200 dark:bg-yellow-300 rounded opacity-80'></div>
-              <div className='absolute top-6 right-2 w-2 h-2 bg-yellow-200 dark:bg-yellow-300 rounded opacity-80'></div>
-
               {/* Icon */}
               <div className='text-white text-xl drop-shadow-lg z-10'>
                 {landmark.icon}
@@ -318,9 +337,6 @@ const ThirdPersonRiverPortfolio = () => {
             </div>
 
             {/* Foundation with depth */}
-            <div
-              className={`${landmark.building.color} w-20 h-6 opacity-90 rounded-b-sm`}
-            ></div>
             <div
               className={`${landmark.building.color} w-18 h-2 opacity-70`}
             ></div>
@@ -580,7 +596,7 @@ const ThirdPersonRiverPortfolio = () => {
   const renderBoat = () => {
     return (
       <div
-        className='absolute z-40 transition-all duration-500 ease-out'
+        className='absolute z-50 transition-all duration-500 ease-out'
         style={{
           left: `${boatPosition.x}%`,
           top: `${boatPosition.y}%`,
@@ -590,7 +606,7 @@ const ThirdPersonRiverPortfolio = () => {
       >
         <div className='relative'>
           {/* Enhanced ripple effect */}
-          <div className='absolute -z-10 -translate-x-1/2 -translate-y-1/2'>
+          <div className='absolute'>
             <div
               className={`w-20 h-20 rounded-full ${
                 isDarkMode ? 'bg-blue-400' : 'bg-blue-200'
@@ -621,13 +637,7 @@ const ThirdPersonRiverPortfolio = () => {
           </div>
 
           {/* Wake effect */}
-          <div className='absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-8 opacity-50'>
-            <div
-              className={`w-full h-full ${
-                isDarkMode ? 'bg-blue-300' : 'bg-blue-400'
-              } rounded-b-full animate-pulse`}
-            ></div>
-          </div>
+          <div className='absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-8 opacity-50'></div>
         </div>
       </div>
     );
@@ -852,7 +862,11 @@ const ThirdPersonRiverPortfolio = () => {
         </div>
 
         {/* Section content */}
-        {renderSectionContent()}
+        {activeSection && (
+          <div className='fixed inset-0 z-40 flex items-center justify-center pointer-events-auto animate-fadeIn'>
+            {renderSectionContent()}
+          </div>
+        )}
 
         {/* Mobile controls */}
         {renderControls()}
