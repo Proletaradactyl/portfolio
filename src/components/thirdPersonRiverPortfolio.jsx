@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Github,
   Mail,
@@ -14,6 +14,7 @@ import {
 const ThirdPersonRiverPortfolio = () => {
   const [boatPosition, setBoatPosition] = useState({ x: 50, y: 80 });
   const [activeSection, setActiveSection] = useState(null);
+  const [modalLocked, setModalLocked] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [boatSpeed, setBoatSpeed] = useState(2);
   const treesRef = useRef(null);
@@ -23,63 +24,67 @@ const ThirdPersonRiverPortfolio = () => {
   const riverLeft = 33.33;
   const riverRight = 66.66;
 
-  const landmarks = [
-    {
-      id: 'about',
-      name: 'About Me',
-      icon: <User />,
-      position: { x: 33.33, y: 10 }, // align with left river bank
-      side: 'left',
-      building: {
-        type: 'cabin',
-        color: 'bg-gradient-to-t from-amber-800 to-amber-600',
+  // Memoize landmarks to avoid unnecessary re-renders
+  const landmarks = useMemo(
+    () => [
+      {
+        id: 'about',
+        name: 'About Me',
+        icon: <User />,
+        position: { x: 33.33, y: 10 }, // align with left river bank
+        side: 'left',
+        building: {
+          type: 'cabin',
+          color: 'bg-gradient-to-t from-amber-800 to-amber-600',
+        },
       },
-    },
-    {
-      id: 'skills',
-      name: 'Skills',
-      icon: <BookOpen />,
-      position: { x: 40, y: 50 }, // moved lower
-      side: 'left',
-      building: {
-        type: 'library',
-        color: 'bg-gradient-to-t from-emerald-800 to-emerald-600',
+      {
+        id: 'skills',
+        name: 'Skills',
+        icon: <BookOpen />,
+        position: { x: 40, y: 50 }, // moved lower
+        side: 'left',
+        building: {
+          type: 'library',
+          color: 'bg-gradient-to-t from-emerald-800 to-emerald-600',
+        },
       },
-    },
-    {
-      id: 'projects',
-      name: 'Projects',
-      icon: <Briefcase />,
-      position: { x: 70, y: 60 }, // moved lower
-      side: 'right',
-      building: {
-        type: 'workshop',
-        color: 'bg-gradient-to-t from-blue-800 to-blue-600',
+      {
+        id: 'projects',
+        name: 'Projects',
+        icon: <Briefcase />,
+        position: { x: 70, y: 60 }, // moved lower
+        side: 'right',
+        building: {
+          type: 'workshop',
+          color: 'bg-gradient-to-t from-blue-800 to-blue-600',
+        },
       },
-    },
-    {
-      id: 'contact',
-      name: 'Contact',
-      icon: <Mail />,
-      position: { x: 66, y: 20 }, // moved lower
-      side: 'right',
-      building: {
-        type: 'post',
-        color: 'bg-gradient-to-t from-red-800 to-red-600',
+      {
+        id: 'contact',
+        name: 'Contact',
+        icon: <Mail />,
+        position: { x: 66, y: 20 }, // moved lower
+        side: 'right',
+        building: {
+          type: 'post',
+          color: 'bg-gradient-to-t from-red-800 to-red-600',
+        },
       },
-    },
-    {
-      id: 'home',
-      name: 'Home',
-      icon: <Home />,
-      position: { x: 50, y: 80 }, // stays near bottom
-      side: 'bottom',
-      building: {
-        type: 'dock',
-        color: 'bg-gradient-to-t from-slate-700 to-slate-500',
+      {
+        id: 'home',
+        name: 'Home',
+        icon: <Home />,
+        position: { x: 50, y: 80 }, // stays near bottom
+        side: 'bottom',
+        building: {
+          type: 'dock',
+          color: 'bg-gradient-to-t from-slate-700 to-slate-500',
+        },
       },
-    },
-  ];
+    ],
+    [] // No dependencies, so only created once
+  );
 
   // Generate trees only once
   if (!treesRef.current) {
@@ -182,6 +187,7 @@ const ThirdPersonRiverPortfolio = () => {
   }, [riverLeft, riverRight]);
 
   useEffect(() => {
+    if (modalLocked) return;
     const nearbyLandmark = landmarks.find((landmark) => {
       const distance = Math.sqrt(
         Math.pow(landmark.position.x - boatPosition.x, 2) +
@@ -191,7 +197,7 @@ const ThirdPersonRiverPortfolio = () => {
     });
 
     setActiveSection(nearbyLandmark?.id || null);
-  }, [boatPosition, landmarks]);
+  }, [boatPosition, landmarks, modalLocked]);
 
   const renderWaves = () => {
     return Array(12)
@@ -307,17 +313,20 @@ const ThirdPersonRiverPortfolio = () => {
             left,
             top: `${landmark.position.y}%`,
           }}
-
+          onClick={() => {
+            setActiveSection(landmark.id);
+            setModalLocked(true);
+          }}
           tabIndex={0}
-          role="button"
+          role='button'
           aria-label={landmark.name}
         >
           <div className='flex flex-col items-center'>
             {/* Enhanced building with roof */}
             <div
-              className={`${
-                landmark.building.color
-              } ${isActive ? 'animate-pulse' : ''}`}
+              className={`${landmark.building.color} ${
+                isActive ? 'animate-pulse' : ''
+              }`}
             ></div>
             <div
               className={`${
@@ -376,16 +385,13 @@ const ThirdPersonRiverPortfolio = () => {
             About Me
           </h2>
           <p className='mb-3 leading-relaxed'>
-            Hello! I'm a passionate full-stack developer who loves creating
-            immersive and interactive web experiences.
-          </p>
-          <p className='mb-3 leading-relaxed'>
-            I specialize in modern web technologies and enjoy pushing the
-            boundaries of what's possible in the browser.
+            My name is Kara, I'm a passionate full-stack developer who loves
+            creating immersive and interactive web experiences. I'm a big fan of
+            creative use of space and content driven by user interaction.
           </p>
           <p className='text-sm text-gray-600 dark:text-gray-400'>
-            This river portfolio showcases my creativity and technical skills in
-            React development.
+            This river portfolio showcases my love of creativity and newly
+            developing skills using React development technologies.
           </p>
           <div className='mt-4 p-3 bg-amber-50 dark:bg-amber-900 dark:bg-opacity-30 rounded-lg'>
             <p className='text-sm font-semibold text-amber-800 dark:text-amber-300'>
@@ -405,18 +411,14 @@ const ThirdPersonRiverPortfolio = () => {
                 Frontend
               </h3>
               <div className='space-y-2'>
-                {[
-                  'HTML/CSS',
-                  'JavaScript',
-                  'React',
-                  'Tailwind CSS',
-                  'Three.js',
-                ].map((skill, i) => (
-                  <div key={skill} className='flex items-center'>
-                    <div className='w-2 h-2 bg-blue-500 rounded-full mr-2'></div>
-                    <span className='text-sm'>{skill}</span>
-                  </div>
-                ))}
+                {['HTML/CSS', 'JavaScript', 'React', 'Tailwind CSS'].map(
+                  (skill, i) => (
+                    <div key={skill} className='flex items-center'>
+                      <div className='w-2 h-2 bg-blue-500 rounded-full mr-2'></div>
+                      <span className='text-sm'>{skill}</span>
+                    </div>
+                  )
+                )}
               </div>
             </div>
             <div>
@@ -424,18 +426,14 @@ const ThirdPersonRiverPortfolio = () => {
                 Backend
               </h3>
               <div className='space-y-2'>
-                {[
-                  'Node.js',
-                  'Express',
-                  'MongoDB',
-                  'PostgreSQL',
-                  'REST APIs',
-                ].map((skill, i) => (
-                  <div key={skill} className='flex items-center'>
-                    <div className='w-2 h-2 bg-purple-500 rounded-full mr-2'></div>
-                    <span className='text-sm'>{skill}</span>
-                  </div>
-                ))}
+                {['Node.js', 'Express', 'MongoDB', 'REST APIs'].map(
+                  (skill, i) => (
+                    <div key={skill} className='flex items-center'>
+                      <div className='w-2 h-2 bg-purple-500 rounded-full mr-2'></div>
+                      <span className='text-sm'>{skill}</span>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -467,10 +465,10 @@ const ThirdPersonRiverPortfolio = () => {
             </div>
             <div className='border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition-shadow'>
               <h3 className='font-semibold text-lg text-green-600 dark:text-green-400'>
-                🌤️ Weather Dashboard
+                🌤️
               </h3>
               <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
-                Real-time weather visualization with location search
+                Pending
               </p>
               <div className='flex flex-wrap gap-1'>
                 {['JavaScript', 'API Integration', 'Chart.js'].map((tech) => (
@@ -485,10 +483,10 @@ const ThirdPersonRiverPortfolio = () => {
             </div>
             <div className='border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition-shadow'>
               <h3 className='font-semibold text-lg text-purple-600 dark:text-purple-400'>
-                📱 Task Manager
+                📱
               </h3>
               <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
-                Full-stack productivity app with team collaboration
+                Pending
               </p>
               <div className='flex flex-wrap gap-1'>
                 {['React', 'Node.js', 'MongoDB'].map((tech) => (
@@ -515,7 +513,7 @@ const ThirdPersonRiverPortfolio = () => {
               <div>
                 <p className='font-semibold'>Email</p>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  your.email@example.com
+                  Proletarodactyl@proton.me
                 </p>
               </div>
             </div>
@@ -524,7 +522,7 @@ const ThirdPersonRiverPortfolio = () => {
               <div>
                 <p className='font-semibold'>LinkedIn</p>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  linkedin.com/in/yourname
+                  linkedin.com/in/kara-g-1765458a/
                 </p>
               </div>
             </div>
@@ -533,7 +531,7 @@ const ThirdPersonRiverPortfolio = () => {
               <div>
                 <p className='font-semibold'>GitHub</p>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  github.com/yourusername
+                  github.com/Proletaradactyl
                 </p>
               </div>
             </div>
@@ -863,8 +861,29 @@ const ThirdPersonRiverPortfolio = () => {
 
         {/* Section content */}
         {activeSection && (
-          <div className='fixed inset-0 z-40 flex items-center justify-center pointer-events-auto animate-fadeIn'>
-            {renderSectionContent()}
+          <div
+            className='fixed inset-0 z-40 flex items-center justify-center pointer-events-auto animate-fadeIn'
+            onClick={() => {
+              setActiveSection(null);
+              setModalLocked(false);
+            }}
+          >
+            <div
+              className='relative'
+              onClick={e => e.stopPropagation()} // Prevent closing when clicking inside modal
+            >
+              <button
+                className='absolute top-2 right-2 z-50 bg-white dark:bg-slate-700 rounded-full p-2 shadow hover:bg-gray-200 dark:hover:bg-slate-600'
+                onClick={() => {
+                  setActiveSection(null);
+                  setModalLocked(false);
+                }}
+                aria-label='Close'
+              >
+                ✕
+              </button>
+              {renderSectionContent()}
+            </div>
           </div>
         )}
 
