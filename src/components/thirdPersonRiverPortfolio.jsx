@@ -7,15 +7,12 @@ import {
   Briefcase,
   BookOpen,
   Home,
-  Sun,
-  Moon,
 } from 'lucide-react';
 
 const ThirdPersonRiverPortfolio = () => {
   const [boatPosition, setBoatPosition] = useState({ x: 50, y: 80 });
   const [activeSection, setActiveSection] = useState(null);
   const [modalLocked, setModalLocked] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [boatSpeed, setBoatSpeed] = useState(2);
   const treesRef = useRef(null);
   const cloudsRef = useRef(null);
@@ -96,16 +93,10 @@ const ThirdPersonRiverPortfolio = () => {
       const isLeft = i % 2 === 0;
       const baseX = isLeft ? Math.random() * 25 : 75 + Math.random() * 25;
       const y = Math.random() * 100;
-      // Avoid bottom-left and bottom-right corners (left 20% & bottom 20%, right 20% & bottom 20%)
-      const inBottomLeft = baseX < 20 && y > 80;
-      const inBottomRight = baseX > 80 && y > 80;
-      if (!(inBottomLeft || inBottomRight)) {
-        const size = 8 + Math.random() * 12;
-        const treeType =
-          treeTypes[Math.floor(Math.random() * treeTypes.length)];
-        const sway = Math.random() * 2;
-        treesRef.current.push({ isLeft, baseX, y, size, treeType, sway, i });
-      }
+      const size = 8 + Math.random() * 12;
+      const treeType = treeTypes[Math.floor(Math.random() * treeTypes.length)];
+      const sway = Math.random() * 2;
+      treesRef.current.push({ isLeft, baseX, y, size, treeType, sway, i });
       i++;
     }
   }
@@ -117,9 +108,7 @@ const ThirdPersonRiverPortfolio = () => {
       const y = Math.random() * 30;
       const size = 8 + Math.random() * 15;
       const speed = 100 + Math.random() * 200;
-      const opacity = isDarkMode
-        ? 0.2 + Math.random() * 0.3
-        : 0.5 + Math.random() * 0.4;
+      const opacity = 0.5 + Math.random() * 0.4;
       const delay = -Math.random() * speed;
       return { x, y, size, speed, opacity, delay, i };
     });
@@ -166,6 +155,8 @@ const ThirdPersonRiverPortfolio = () => {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (modalLocked) return; // Prevent boat movement when modal is locked
+
       // Get bounding rect of the main container
       const container = document.body;
       const rect = container.getBoundingClientRect();
@@ -184,8 +175,9 @@ const ThirdPersonRiverPortfolio = () => {
     window.addEventListener('mousemove', handleMouseMove);
 
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [riverLeft, riverRight]);
+  }, [riverLeft, riverRight, modalLocked]);
 
+  // Effect to update activeSection only when modal is not locked
   useEffect(() => {
     if (modalLocked) return;
     const nearbyLandmark = landmarks.find((landmark) => {
@@ -209,21 +201,9 @@ const ThirdPersonRiverPortfolio = () => {
           style={{
             background: `linear-gradient(90deg, 
             transparent 0%, 
-            ${
-              isDarkMode
-                ? 'rgba(59, 130, 246, 0.1)'
-                : 'rgba(147, 197, 253, 0.2)'
-            } 25%, 
-            ${
-              isDarkMode
-                ? 'rgba(59, 130, 246, 0.15)'
-                : 'rgba(147, 197, 253, 0.3)'
-            } 50%, 
-            ${
-              isDarkMode
-                ? 'rgba(59, 130, 246, 0.1)'
-                : 'rgba(147, 197, 253, 0.2)'
-            } 75%, 
+            rgba(147, 197, 253, 0.2) 25%, 
+            rgba(147, 197, 253, 0.3) 50%, 
+            rgba(147, 197, 253, 0.2) 75%, 
             transparent 100%)`,
             transform: `translateX(${-100 + i * 10}%) translateY(${
               i * 2
@@ -250,13 +230,11 @@ const ThirdPersonRiverPortfolio = () => {
             top: `${tree.y}%`,
             zIndex: 20,
             transform: 'translateY(-100%)',
-            animation: `sway ${3 + tree.sway}s ease-in-out infinite alternate`,
+            animation: `sway ${2 + tree.sway}s ease-in-out infinite alternate`,
           }}
         >
           <div
-            className={`${
-              isDarkMode ? 'brightness-75' : 'brightness-100'
-            } drop-shadow-sm`}
+            className={`brightness-100 drop-shadow-sm`}
             style={{
               fontSize: `${tree.size}vmin`,
               filter: `hue-rotate(0deg)`, // Remove random hue for consistency
@@ -315,7 +293,11 @@ const ThirdPersonRiverPortfolio = () => {
           }}
           onClick={() => {
             setActiveSection(landmark.id);
-            setModalLocked(true);
+            setModalLocked(true); // Always lock modal on click
+          }}
+          onMouseEnter={() => {
+            setActiveSection(landmark.id);
+            setModalLocked(true); // Also lock modal on hover
           }}
           tabIndex={0}
           role='button'
@@ -352,11 +334,7 @@ const ThirdPersonRiverPortfolio = () => {
 
             {/* Enhanced label */}
             <div
-              className={`mt-2 px-2 py-1 rounded text-xs font-bold ${
-                isDarkMode
-                  ? 'text-white bg-slate-800 bg-opacity-50'
-                  : 'text-slate-800 bg-white bg-opacity-75'
-              } ${
+              className={`mt-2 px-2 py-1 rounded text-xs font-bold text-slate-800 bg-white bg-opacity-75 ${
                 isActive ? 'ring-2 ring-yellow-400' : ''
               } transition-all duration-300`}
             >
@@ -380,34 +358,32 @@ const ThirdPersonRiverPortfolio = () => {
 
     const sectionContents = {
       about: (
-        <div className='bg-white bg-opacity-95 dark:bg-slate-800 dark:bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700'>
-          <h2 className='text-3xl font-bold mb-4 text-amber-700 dark:text-amber-400'>
-            About Me
-          </h2>
+        <div className='bg-white bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200'>
+          <h2 className='text-3xl font-bold mb-4 text-amber-700'>About Me</h2>
           <p className='mb-3 leading-relaxed'>
             My name is Kara, I'm a passionate full-stack developer who loves
             creating immersive and interactive web experiences. I'm a big fan of
             creative use of space and content driven by user interaction.
           </p>
-          <p className='text-sm text-gray-600 dark:text-gray-400'>
+          <p className='text-sm text-gray-600'>
             This river portfolio showcases my love of creativity and newly
             developing skills using React development technologies.
           </p>
-          <div className='mt-4 p-3 bg-amber-50 dark:bg-amber-900 dark:bg-opacity-30 rounded-lg'>
-            <p className='text-sm font-semibold text-amber-800 dark:text-amber-300'>
+          <div className='mt-4 p-3 bg-amber-50 rounded-lg'>
+            <p className='text-sm font-semibold text-amber-800'>
               🚀 Always learning, always building!
             </p>
           </div>
         </div>
       ),
       skills: (
-        <div className='bg-white bg-opacity-95 dark:bg-slate-800 dark:bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700'>
-          <h2 className='text-3xl font-bold mb-4 text-emerald-700 dark:text-emerald-400'>
+        <div className='bg-white bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200'>
+          <h2 className='text-3xl font-bold mb-4 text-emerald-700'>
             My Skills
           </h2>
           <div className='grid grid-cols-2 gap-6'>
             <div>
-              <h3 className='font-semibold text-lg mb-3 text-blue-600 dark:text-blue-400'>
+              <h3 className='font-semibold text-lg mb-3 text-blue-600'>
                 Frontend
               </h3>
               <div className='space-y-2'>
@@ -422,7 +398,7 @@ const ThirdPersonRiverPortfolio = () => {
               </div>
             </div>
             <div>
-              <h3 className='font-semibold text-lg mb-3 text-purple-600 dark:text-purple-400'>
+              <h3 className='font-semibold text-lg mb-3 text-purple-600'>
                 Backend
               </h3>
               <div className='space-y-2'>
@@ -440,59 +416,49 @@ const ThirdPersonRiverPortfolio = () => {
         </div>
       ),
       projects: (
-        <div className='bg-white bg-opacity-95 dark:bg-slate-800 dark:bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700'>
-          <h2 className='text-3xl font-bold mb-4 text-blue-700 dark:text-blue-400'>
-            My Projects
-          </h2>
+        <div className='bg-white bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200'>
+          <h2 className='text-3xl font-bold mb-4 text-blue-700'>My Projects</h2>
           <div className='space-y-4'>
-            <div className='border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition-shadow'>
-              <h3 className='font-semibold text-lg text-blue-600 dark:text-blue-400'>
+            <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
+              <h3 className='font-semibold text-lg text-blue-600'>
                 🚣 River Portfolio
               </h3>
-              <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+              <p className='text-sm text-gray-600 mb-2'>
                 Interactive 3D portfolio with immersive river navigation
               </p>
               <div className='flex flex-wrap gap-1'>
                 {['React', 'Tailwind CSS', '3D CSS'].map((tech) => (
                   <span
                     key={tech}
-                    className='px-2 py-1 bg-blue-100 dark:bg-blue-900 text-xs rounded'
+                    className='px-2 py-1 bg-blue-100 text-xs rounded'
                   >
                     {tech}
                   </span>
                 ))}
               </div>
             </div>
-            <div className='border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition-shadow'>
-              <h3 className='font-semibold text-lg text-green-600 dark:text-green-400'>
-                🌤️
-              </h3>
-              <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
-                Pending
-              </p>
+            <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
+              <h3 className='font-semibold text-lg text-green-600'>🌤️</h3>
+              <p className='text-sm text-gray-600 mb-2'>Pending</p>
               <div className='flex flex-wrap gap-1'>
                 {['JavaScript', 'API Integration', 'Chart.js'].map((tech) => (
                   <span
                     key={tech}
-                    className='px-2 py-1 bg-green-100 dark:bg-green-900 text-xs rounded'
+                    className='px-2 py-1 bg-green-100 text-xs rounded'
                   >
                     {tech}
                   </span>
                 ))}
               </div>
             </div>
-            <div className='border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition-shadow'>
-              <h3 className='font-semibold text-lg text-purple-600 dark:text-purple-400'>
-                📱
-              </h3>
-              <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
-                Pending
-              </p>
+            <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
+              <h3 className='font-semibold text-lg text-purple-600'>📱</h3>
+              <p className='text-sm text-gray-600 mb-2'>Pending</p>
               <div className='flex flex-wrap gap-1'>
                 {['React', 'Node.js', 'MongoDB'].map((tech) => (
                   <span
                     key={tech}
-                    className='px-2 py-1 bg-purple-100 dark:bg-purple-900 text-xs rounded'
+                    className='px-2 py-1 bg-purple-100 text-xs rounded'
                   >
                     {tech}
                   </span>
@@ -503,49 +469,49 @@ const ThirdPersonRiverPortfolio = () => {
         </div>
       ),
       contact: (
-        <div className='bg-white bg-opacity-95 dark:bg-slate-800 dark:bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700'>
-          <h2 className='text-3xl font-bold mb-4 text-red-700 dark:text-red-400'>
+        <div className='bg-white bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200'>
+          <h2 className='text-3xl font-bold mb-4 text-red-700'>
             Let's Connect
           </h2>
           <div className='space-y-4'>
-            <div className='flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer'>
+            <div className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer'>
               <Mail size={24} className='text-red-500' />
               <div>
                 <p className='font-semibold'>Email</p>
-                <p className='text-sm text-gray-600 dark:text-gray-400'>
+                <p className='text-sm text-gray-600'>
                   Proletarodactyl@proton.me
                 </p>
               </div>
             </div>
-            <div className='flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer'>
+            <div className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer'>
               <Linkedin size={24} className='text-blue-600' />
               <div>
                 <p className='font-semibold'>LinkedIn</p>
-                <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  linkedin.com/in/kara-g-1765458a/
+                <p className='text-sm text-gray-600'>
+                  linkedin.com/in/kara-g-1765458a
                 </p>
               </div>
             </div>
-            <div className='flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer'>
-              <Github size={24} className='text-gray-800 dark:text-gray-200' />
+            <div className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer'>
+              <Github size={24} className='text-gray-800' />
               <div>
                 <p className='font-semibold'>GitHub</p>
-                <p className='text-sm text-gray-600 dark:text-gray-400'>
+                <p className='text-sm text-gray-600'>
                   github.com/Proletaradactyl
                 </p>
               </div>
             </div>
           </div>
-          <div className='mt-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900 dark:to-pink-900 dark:bg-opacity-30 rounded-lg'>
-            <p className='text-sm font-semibold text-red-800 dark:text-red-300'>
+          <div className='mt-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg'>
+            <p className='text-sm font-semibold text-red-800'>
               💬 Always open to new opportunities and collaborations!
             </p>
           </div>
         </div>
       ),
       home: (
-        <div className='bg-white bg-opacity-95 dark:bg-slate-800 dark:bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700'>
-          <h2 className='text-3xl font-bold mb-4 text-slate-700 dark:text-slate-300'>
+        <div className='bg-white bg-opacity-95 p-6 rounded-xl shadow-2xl border border-gray-200'>
+          <h2 className='text-3xl font-bold mb-4 text-slate-700'>
             🏠 Welcome to My River!
           </h2>
           <p className='mb-4 leading-relaxed'>
@@ -555,20 +521,14 @@ const ThirdPersonRiverPortfolio = () => {
           </p>
 
           <div className='grid grid-cols-2 gap-4 mb-4'>
-            <div className='p-3 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-30 rounded-lg'>
-              <p className='font-semibold text-blue-800 dark:text-blue-300 mb-2'>
-                🎮 Controls:
-              </p>
-              <ul className='text-sm space-y-1'>
-                <li>• Arrow keys or WASD: Move</li>
-                <li>• +/-: Adjust perspective</li>
-                <li>• Space: Speed boost</li>
-              </ul>
+            <div className='p-3 bg-blue-50 rounded-lg'>
+              <p className='font-semibold text-blue-800 mb-2'>Direct Links:</p>
+              <li>•</li>
+              <li>•</li>
+              <ul className='text-sm space-y-1'></ul>
             </div>
-            <div className='p-3 bg-green-50 dark:bg-green-900 dark:bg-opacity-30 rounded-lg'>
-              <p className='font-semibold text-green-800 dark:text-green-300 mb-2'>
-                🏛️ Locations:
-              </p>
+            <div className='p-3 bg-green-50 rounded-lg'>
+              <p className='font-semibold text-green-800 mb-2'>🏛️ Locations:</p>
               <ul className='text-sm space-y-1'>
                 <li>• 🏠 About (Cabin)</li>
                 <li>• 📚 Skills (Library)</li>
@@ -578,10 +538,9 @@ const ThirdPersonRiverPortfolio = () => {
             </div>
           </div>
 
-          <div className='p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 dark:bg-opacity-30 rounded-lg'>
-            <p className='text-sm font-semibold text-purple-800 dark:text-purple-300'>
-              ✨ Navigate close to any building to learn more about that
-              section!
+          <div className='p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg'>
+            <p className='text-sm font-semibold text-purple-800'>
+              ✨ Hover over any building to learn more about that section!
             </p>
           </div>
         </div>
@@ -606,14 +565,10 @@ const ThirdPersonRiverPortfolio = () => {
           {/* Enhanced ripple effect */}
           <div className='absolute'>
             <div
-              className={`w-20 h-20 rounded-full ${
-                isDarkMode ? 'bg-blue-400' : 'bg-blue-200'
-              } opacity-30 animate-ping`}
+              className={`w-20 h-20 rounded-full bg-blue-200 opacity-30 animate-ping`}
             ></div>
             <div
-              className={`absolute inset-0 w-16 h-16 rounded-full ${
-                isDarkMode ? 'bg-blue-500' : 'bg-blue-300'
-              } opacity-40 animate-pulse`}
+              className={`absolute inset-0 w-16 h-16 rounded-full bg-blue-300 opacity-40 animate-pulse`}
             ></div>
           </div>
 
@@ -641,139 +596,34 @@ const ThirdPersonRiverPortfolio = () => {
     );
   };
 
-  const renderControls = () => (
-    <div className='fixed bottom-6 right-6 flex flex-col gap-3 z-50'>
-      {/* View and mode toggles */}
-      <div className='flex gap-2'>
-        <button
-          className='bg-white bg-opacity-90 dark:bg-slate-700 dark:bg-opacity-90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform'
-          onClick={() => setIsDarkMode((prev) => !prev)}
-          title='Toggle Theme'
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-      </div>
-
-      {/* Movement controls */}
-      <div className='grid grid-cols-3 gap-2'>
-        <div></div>
-        <button
-          className='bg-white bg-opacity-80 dark:bg-slate-700 dark:bg-opacity-80 w-12 h-12 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-100 transition-all'
-          onClick={() => {
-            setBoatPosition((prev) => ({
-              ...prev,
-              y: Math.max(prev.y - boatSpeed, 5),
-            }));
-          }}
-        >
-          <span className='transform -rotate-90 text-lg'>➤</span>
-        </button>
-        <div></div>
-
-        <button
-          className='bg-white bg-opacity-80 dark:bg-slate-700 dark:bg-opacity-80 w-12 h-12 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-100 transition-all'
-          onClick={() => {
-            setBoatPosition((prev) => ({
-              ...prev,
-              x: Math.max(prev.x - boatSpeed, riverLeft),
-            }));
-          }}
-        >
-          <span className='transform rotate-180 text-lg'>➤</span>
-        </button>
-        <button
-          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md transition-all ${
-            boatSpeed > 2
-              ? 'bg-yellow-400 text-yellow-900'
-              : 'bg-white bg-opacity-80 dark:bg-slate-700 dark:bg-opacity-80'
-          }`}
-          onClick={() => setBoatSpeed((prev) => (prev === 2 ? 4 : 2))}
-          title='Speed Boost (Space)'
-        >
-          <span className='text-sm font-bold'>
-            {boatSpeed > 2 ? '💨' : '🚣'}
-          </span>
-        </button>
-        <button
-          className='bg-white bg-opacity-80 dark:bg-slate-700 dark:bg-opacity-80 w-12 h-12 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-100 transition-all'
-          onClick={() => {
-            setBoatPosition((prev) => ({
-              ...prev,
-              x: Math.min(prev.x + boatSpeed, riverRight),
-            }));
-          }}
-        >
-          <span className='text-lg'>➤</span>
-        </button>
-
-        <div></div>
-        <button
-          className='bg-white bg-opacity-80 dark:bg-slate-700 dark:bg-opacity-80 w-12 h-12 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-100 transition-all'
-          onClick={() => {
-            setBoatPosition((prev) => ({
-              ...prev,
-              y: Math.min(prev.y + boatSpeed, 95),
-            }));
-          }}
-        >
-          <span className='transform rotate-90 text-lg'>➤</span>
-        </button>
-        <div></div>
-      </div>
-
-      {/* Perspective controls for 3D mode */}
-    </div>
-  );
-
   return (
     <div
-      className={`relative w-full h-screen overflow-hidden transition-colors duration-500 ${
-        isDarkMode
-          ? 'dark bg-gradient-to-b from-slate-900 via-slate-800 to-blue-900 text-white'
-          : 'bg-gradient-to-b from-blue-200 via-blue-300 to-blue-400 text-slate-800'
-      }`}
+      className={`relative w-full h-screen overflow-hidden transition-colors duration-500 bg-gradient-to-b from-blue-200 via-blue-300 to-blue-400 text-slate-800`}
     >
       {/* Enhanced sky with time-of-day effects */}
       <div className='absolute top-0 left-0 w-full h-full pointer-events-none'>
-        <div
-          className={`absolute inset-0 ${
-            isDarkMode
-              ? 'bg-gradient-to-b from-indigo-900 via-blue-900 to-slate-900'
-              : 'bg-gradient-to-b from-sky-300 via-blue-400 to-blue-500'
-          } transition-colors duration-1000`}
-        ></div>
+        <div className='absolute inset-0 bg-gradient-to-b from-sky-300 via-blue-400 to-blue-500 transition-colors duration-1000'></div>
 
-        {/* Sun/Moon */}
-        <div
-          className={`absolute top-8 right-8 text-6xl transition-all duration-1000 ${
-            isDarkMode ? 'text-yellow-200' : 'text-yellow-400'
-          }`}
-        >
-          {isDarkMode ? '🌙' : '☀️'}
+        {/* Sun only */}
+        <div className='absolute top-8 right-8 text-6xl transition-all duration-1000 text-yellow-400'>
+          ☀️
         </div>
       </div>
 
       {/* Game area with enhanced perspective */}
       <div>
-        {/* 3D world container */}
         <div>
           {/* Enhanced river with depth */}
           <div className='absolute top-0 left-0 w-full h-full'>
             <div
-              className={`absolute left-1/2 top-0 bottom-0 w-1/3 transform -translate-x-1/2 transition-colors duration-500 ${
-                isDarkMode
-                  ? 'bg-gradient-to-b from-blue-800 to-blue-900'
-                  : 'bg-gradient-to-b from-blue-400 to-blue-600'
-              }`}
+              className={`absolute left-1/2 top-0 bottom-0 w-1/3 transform -translate-x-1/2 transition-colors duration-500 ${'bg-gradient-to-b from-blue-400 to-blue-600'}`}
             >
               {renderWaves()}
 
               {/* River bottom texture */}
               <div className='absolute inset-0 opacity-20'>
                 <div
-                  className={`w-full h-full ${
-                    isDarkMode ? 'bg-blue-950' : 'bg-blue-700'
-                  }`}
+                  className={`w-full h-full ${'bg-blue-700'}`}
                   style={{
                     backgroundImage:
                       'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 1px, transparent 1px)',
@@ -786,11 +636,7 @@ const ThirdPersonRiverPortfolio = () => {
 
           {/* Enhanced banks with texture */}
           <div
-            className={`absolute top-0 left-0 bottom-0 w-1/3 transition-colors duration-500 ${
-              isDarkMode
-                ? 'bg-gradient-to-r from-green-900 to-green-800'
-                : 'bg-gradient-to-r from-green-400 to-green-500'
-            }`}
+            className={`absolute top-0 left-0 bottom-0 w-1/3 transition-colors duration-500 ${'bg-gradient-to-r from-green-400 to-green-500'}`}
           >
             {/* Grass texture */}
             <div className='absolute inset-0 opacity-30'>
@@ -801,16 +647,8 @@ const ThirdPersonRiverPortfolio = () => {
                   45deg,
                   transparent,
                   transparent 2px,
-                  ${
-                    isDarkMode
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(34, 197, 94, 0.3)'
-                  } 2px,
-                  ${
-                    isDarkMode
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(34, 197, 94, 0.3)'
-                  } 4px
+                  rgba(34, 197, 94, 0.3) 2px,
+                  rgba(34, 197, 94, 0.3) 4px
                 )`,
                 }}
               ></div>
@@ -818,11 +656,7 @@ const ThirdPersonRiverPortfolio = () => {
           </div>
 
           <div
-            className={`absolute top-0 right-0 bottom-0 w-1/3 transition-colors duration-500 ${
-              isDarkMode
-                ? 'bg-gradient-to-l from-green-900 to-green-800'
-                : 'bg-gradient-to-l from-green-400 to-green-500'
-            }`}
+            className={`absolute top-0 right-0 bottom-0 w-1/3 transition-colors duration-500 ${'bg-gradient-to-l from-green-400 to-green-500'}`}
           >
             {/* Grass texture */}
             <div className='absolute inset-0 opacity-30'>
@@ -833,16 +667,8 @@ const ThirdPersonRiverPortfolio = () => {
                   -45deg,
                   transparent,
                   transparent 2px,
-                  ${
-                    isDarkMode
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(34, 197, 94, 0.3)'
-                  } 2px,
-                  ${
-                    isDarkMode
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(34, 197, 94, 0.3)'
-                  } 4px
+                  rgba(34, 197, 94, 0.3) 2px,
+                  rgba(34, 197, 94, 0.3) 4px
                 )`,
                 }}
               ></div>
@@ -865,18 +691,18 @@ const ThirdPersonRiverPortfolio = () => {
             className='fixed inset-0 z-40 flex items-center justify-center pointer-events-auto animate-fadeIn'
             onClick={() => {
               setActiveSection(null);
-              setModalLocked(false);
+              setModalLocked(false); // Always unlock modal on close
             }}
           >
             <div
               className='relative'
-              onClick={e => e.stopPropagation()} // Prevent closing when clicking inside modal
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
             >
               <button
-                className='absolute top-2 right-2 z-50 bg-white dark:bg-slate-700 rounded-full p-2 shadow hover:bg-gray-200 dark:hover:bg-slate-600'
+                className='absolute top-2 right-2 z-50 bg-white rounded-full p-2 shadow hover:bg-gray-200'
                 onClick={() => {
                   setActiveSection(null);
-                  setModalLocked(false);
+                  setModalLocked(false); // Always unlock modal on close
                 }}
                 aria-label='Close'
               >
@@ -886,27 +712,6 @@ const ThirdPersonRiverPortfolio = () => {
             </div>
           </div>
         )}
-
-        {/* Mobile controls */}
-        {renderControls()}
-
-        {/* Enhanced status display */}
-        <div className='fixed bottom-6 left-6 space-y-2 z-40'>
-          <div className='bg-white bg-opacity-90 dark:bg-slate-800 dark:bg-opacity-90 px-4 py-2 rounded-lg shadow-lg'>
-            <div className='text-sm font-semibold'></div>
-            <div className='text-xs text-gray-600 dark:text-gray-400'>
-              Speed: {boatSpeed === 2 ? 'Normal' : 'Fast'}
-            </div>
-          </div>
-
-          {activeSection && (
-            <div className='bg-yellow-100 dark:bg-yellow-900 dark:bg-opacity-50 px-4 py-2 rounded-lg shadow-lg animate-pulse'>
-              <div className='text-sm font-semibold text-yellow-800 dark:text-yellow-200'>
-                📍 Near {landmarks.find((l) => l.id === activeSection)?.name}
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Enhanced CSS animations */}
         <style jsx>{`
