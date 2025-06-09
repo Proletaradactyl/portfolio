@@ -70,9 +70,16 @@ import {
             <h2 className='text-3xl font-bold mb-4 text-blue-700'>My Projects</h2>
             <div className='space-y-4'>
               <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
-                <h3 className='font-semibold text-lg text-blue-600'>
-                  🚣 River Portfolio
-                </h3>
+                <a
+                  href='https://github.com/Proletaradactyl/river-portfolio' // <-- Replace with your actual project URL
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='block w-fit'
+                >
+                  <h3 className='font-semibold text-lg text-blue-600 hover:underline'>
+                    🚣 River Portfolio
+                  </h3>
+                </a>
                 <p className='text-sm text-gray-600 mb-2'>
                   Interactive 3D portfolio with immersive river navigation
                 </p>

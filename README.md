@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# River Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to **River Portfolio** – an interactive, animated portfolio built with React and Tailwind CSS. Navigate a peaceful river to explore my skills, projects, and contact information, all presented as buildings along the riverbanks.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+- **Immersive River Navigation:** Move your mouse to sail a boat along the river.
+- **Interactive Landmarks:** Click on buildings (Cabin, Library, Workshop, Post Office) to open detailed modals about each section.
+- **Animated Environment:** Enjoy animated clouds, trees, and river waves for a lively experience.
+- **Responsive Design:** Works well on modern desktops and laptops.
 
-### `npm start`
+## 🏗️ Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+src/
+  App.js                # Main app entry
+  RiverPortfolio.jsx    # Core river scene and logic
+  components/
+    environment/        # River, trees, clouds, waves, etc.
+    interactive/        # Boat, buildings, modal
+  hooks/                # Custom React hooks for environment
+  styles/               # Tailwind and custom CSS
+  assets/               # Images (e.g., boat.png)
+public/
+  index.html            # App HTML template
+  ...
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Getting Started
 
-### `npm test`
+1. **Install dependencies:**
+   ```sh
+   npm install
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Start the development server:**
+   ```sh
+   npm start
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view in your browser.
 
-### `npm run build`
+3. **Build for production:**
+   ```sh
+   npm run build
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **Run tests:**
+   ```sh
+   npm test
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🏞️ Navigation Guide
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Move your mouse** to sail the boat along the river.
+- **Click buildings** to open About, Skills, Projects, or Contact sections.
+- **Close modals** by clicking the ✕ button or outside the modal.
 
-### `npm run eject`
+## 📦 Tech Stack
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Lucide React Icons](https://lucide.dev/icons/)
+- [Create React App](https://create-react-app.dev/)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 👩‍💻 Author
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+**Kara Gresham**  
+- [GitHub](https://github.com/Proletaradactyl)
+- [LinkedIn](https://linkedin.com/in/kara-g-1765458a)
+- Email: Proletarodactyl@proton.me
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📄 License
 
-## Learn More
+This project is licensed under the ISC License.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+> Made with creativity and React! ✨
+```
