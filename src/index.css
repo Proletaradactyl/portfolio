@@ -15,3 +15,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Or wherever your global styles are imported */
+@keyframes cloud-move {
+  0% {
+    left: -20vw;
+  }
+  100% {
+    left: 120vw;
+  }
+}

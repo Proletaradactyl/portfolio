@@ -1,0 +1,83 @@
+@keyframes wave {
+  0% {
+    transform: translateX(-100%) translateY(var(--wave-offset, 0))
+      scaleY(var(--wave-scale, 1));
+  }
+  100% {
+    transform: translateX(200%) translateY(var(--wave-offset, 0))
+      scaleY(var(--wave-scale, 1));
+  }
+}
+
+@keyframes gentleBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--boat-tilt, 0deg));
+  }
+  50% {
+    transform: translateY(-3px) rotate(var(--boat-tilt, 2deg));
+  }
+}
+
+@keyframes cloudFloat {
+  0% {
+    transform: translateX(-10vw);
+  }
+  100% {
+    transform: translateX(110vw);
+  }
+}
+
+@keyframes birdFly {
+  0% {
+    transform: translateX(-5vw) translateY(0);
+  }
+  25% {
+    transform: translateX(25vw) translateY(-10px);
+  }
+  50% {
+    transform: translateX(50vw) translateY(5px);
+  }
+  75% {
+    transform: translateX(75vw) translateY(-5px);
+  }
+  100% {
+    transform: translateX(105vw) translateY(0);
+  }
+}
+
+@keyframes sway {
+  0% {
+    transform: translateY(-100%) rotate(-1deg);
+  }
+  100% {
+    transform: translateY(-100%) rotate(1deg);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.3) translateX(-50%) translateY(-50%);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5) translateX(-50%) translateY(-50%);
+    opacity: 0;
+  }
+}
+
+/* Utility class for fade-in animation */
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}

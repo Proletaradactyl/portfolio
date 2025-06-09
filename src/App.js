@@ -1,11 +1,11 @@
 import React from 'react';
-import ThirdPersonRiverPortfolio from './components/thirdPersonRiverPortfolio';
+import RiverPortfolio from './RiverPortfolio.jsx';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <ThirdPersonRiverPortfolio />
+      <RiverPortfolio />
     </div>
   );
 }
