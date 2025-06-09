@@ -71,7 +71,7 @@ import {
             <div className='space-y-4'>
               <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
                 <a
-                  href='https://sage-panda-abf549.netlify.app' // <-- Replace with your actual project URL
+                  href='https://app.netlify.com/projects/sage-panda-abf549/' // <-- Replace with your actual project URL
                   target='_blank'
                   rel='noopener noreferrer'
                   className='block w-fit'
