@@ -1,11 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  User,
-  Briefcase,
-  BookOpen,
-  Home,
-  Mail,
-} from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback, React } from 'react';
+import { User, Briefcase, BookOpen, Home, Mail } from 'lucide-react';
 import { useRiverTrees, useClouds } from './hooks/useEnvironmentGeneration.js';
 import Buildings from './components/interactive/Buildings.jsx';
 import { RiverTrees } from './components/environment/Trees.jsx';
@@ -89,26 +83,34 @@ const RiverPortfolio = () => {
     []
   );
 
-  // Environment hooks 
+  // Environment hooks
   const trees = useRiverTrees();
   const clouds = useClouds();
 
   // Mouse movement for boat (clamped to river)
   useEffect(() => {
+    let animationFrameId = null;
     const handleMouseMove = (e) => {
       if (modalLocked) return;
-      const container = document.body;
-      const rect = container.getBoundingClientRect();
-      let mouseX = ((e.clientX - rect.left) / rect.width) * 100;
-      let mouseY = ((e.clientY - rect.top) / rect.height) * 100;
-      mouseX += -3;
-      mouseY += -4;
-      const clampedX = Math.max(riverLeft, Math.min(mouseX, riverRight));
-      const clampedY = Math.max(5, Math.min(mouseY, 95));
-      setBoatPosition({ x: clampedX, y: clampedY });
+      if (animationFrameId) return;
+      animationFrameId = requestAnimationFrame(() => {
+        const container = document.body;
+        const rect = container.getBoundingClientRect();
+        let mouseX = ((e.clientX - rect.left) / rect.width) * 100;
+        let mouseY = ((e.clientY - rect.top) / rect.height) * 100;
+        mouseX += -3;
+        mouseY += -4;
+        const clampedX = Math.max(riverLeft, Math.min(mouseX, riverRight));
+        const clampedY = Math.max(5, Math.min(mouseY, 95));
+        setBoatPosition({ x: clampedX, y: clampedY });
+        animationFrameId = null;
+      });
     };
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
   }, [riverLeft, riverRight, modalLocked]);
 
   // Handlers for modal open/close (memoized)
@@ -145,8 +147,7 @@ const RiverPortfolio = () => {
           }}
         />
       ));
-
-      
+  
 
   return (
     <div className='relative w-full h-screen overflow-hidden transition-colors duration-500 bg-gradient-to-b from-blue-200 via-blue-300 to-blue-400 text-slate-800'>

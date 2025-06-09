@@ -1,5 +1,4 @@
-import React from 'react';
-import boatImg from '../../assets/boat.png'; // Adjust the path if needed
+import boatImg from '../../assets/boat.png'; 
 
 const Boat = ({ position }) => (
   <div

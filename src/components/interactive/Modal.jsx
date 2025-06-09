@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SectionModal = ({ open, onClose, children }) => {
   if (!open) return null;
 

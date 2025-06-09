@@ -1,7 +1,5 @@
-import React from 'react';
-
 export function RiverClouds({ clouds }) {
-  // Ensure clouds is an array
+
   if (!Array.isArray(clouds)) return null;
 
   return (
@@ -9,7 +7,7 @@ export function RiverClouds({ clouds }) {
       {clouds.map((cloud) => (
         <div
           key={`cloud-${cloud.i}`}
-          className="absolute select-none pointer-events-none"
+          className='absolute select-none pointer-events-none'
           style={{
             left: `${cloud.x}%`,
             top: `${cloud.y}%`,
