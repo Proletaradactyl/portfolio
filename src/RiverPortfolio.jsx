@@ -28,7 +28,7 @@ const RiverPortfolio = () => {
         id: 'about',
         name: 'About Me',
         icon: <User />,
-        position: { x: 33.33, y: 10 },
+        position: { x: 33.33, y: 16 },
         side: 'left',
         building: {
           type: 'cabin',
@@ -39,7 +39,7 @@ const RiverPortfolio = () => {
         id: 'skills',
         name: 'Skills',
         icon: <BicepsFlexed />,
-        position: { x: 40, y: 47 },
+        position: { x: 40, y: 46 },
         side: 'left',
         building: {
           type: 'library',
@@ -83,7 +83,7 @@ const RiverPortfolio = () => {
         id: 'home',
         name: 'Home',
         icon: <Home />,
-        position: { x: 50, y: 80 },
+        position: { x: 50, y: 76 },
         side: 'left',
         building: {
           type: 'dock',

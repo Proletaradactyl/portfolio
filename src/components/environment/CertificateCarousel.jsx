@@ -19,9 +19,9 @@ const CertificateCarousel = () => {
   const next = () => setCurrent((prev) => (prev === total - 1 ? 0 : prev + 1));
 
   return (
-    <div className='bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl border border-gray-200 max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col items-center'>
-      <h2 className='text-3xl font-bold mb-6 text-pink-700'>My Certificates</h2>
-      <div className='flex items-center gap-6 mb-4'>
+    <div className='bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl border border-gray-200 max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col items-center text-center'>
+      <h2 className='text-3xl font-bold mb-6 text-pink-700 w-full'>My Certificates</h2>
+      <div className='flex items-center gap-6 mb-4 justify-center w-full'>
         <button
           onClick={prev}
           aria-label='Previous certificate'
@@ -42,11 +42,12 @@ const CertificateCarousel = () => {
           &#8594;
         </button>
       </div>
-      <p className='text-sm text-gray-600 mb-2'>
+      <p className='text-sm text-gray-600 mb-2 w-full'>
         {certificateImages[current].label}
       </p>
-      <p className='text-sm text-gray-600'>
-        Click arrows to see different certificates earned for skills I've learned!
+      <p className='text-sm text-gray-600 w-full'>
+        Click the arrows to see different certificates earned for skills I've
+        learned!
       </p>
     </div>
   );
