@@ -13,9 +13,9 @@ export function RiverClouds({ clouds }) {
             top: `${cloud.y}%`,
             fontSize: `${cloud.size}vmin`,
             opacity: cloud.opacity,
-            animation: `cloudFloat ${cloud.speed}s linear infinite`,
+            animation: `cloudFloat ${cloud.speed || 30}s linear infinite`, // default slower speed
             animationDelay: `${cloud.delay}s`,
-            zIndex: 1,
+            zIndex: cloud.zIndex || 1, // allow custom zIndex per cloud
           }}
         >
           ☁️

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, React } from 'react';
-import { User, Briefcase, BookOpen, Home, Mail } from 'lucide-react';
+import { User, Briefcase, BookOpen, Home, Mail, BicepsFlexed } from 'lucide-react';
 import { useRiverTrees, useClouds } from './hooks/useEnvironmentGeneration.js';
 import Buildings from './components/interactive/Buildings.jsx';
 import { RiverTrees } from './components/environment/Trees.jsx';
@@ -38,8 +38,8 @@ const RiverPortfolio = () => {
       {
         id: 'skills',
         name: 'Skills',
-        icon: <BookOpen />,
-        position: { x: 40, y: 50 },
+        icon: <BicepsFlexed />,
+        position: { x: 40, y: 47 },
         side: 'left',
         building: {
           type: 'library',
@@ -50,7 +50,7 @@ const RiverPortfolio = () => {
         id: 'projects',
         name: 'Projects',
         icon: <Briefcase />,
-        position: { x: 70, y: 60 },
+        position: { x: 70, y: 75 },
         side: 'right',
         building: {
           type: 'workshop',
@@ -61,7 +61,7 @@ const RiverPortfolio = () => {
         id: 'contact',
         name: 'Contact',
         icon: <Mail />,
-        position: { x: 66, y: 20 },
+        position: { x: 66, y: 15 },
         side: 'right',
         building: {
           type: 'post',
@@ -69,11 +69,22 @@ const RiverPortfolio = () => {
         },
       },
       {
+        id: 'certificates',
+        name: 'Certificates',
+        icon: <BookOpen />,
+        position: { x: 66, y: 45 },
+        side: 'right',
+        building: {
+          type: 'post',
+          color: 'bg-gradient-to-t from-purple-800 to-purple-600',
+        },
+      },
+      {
         id: 'home',
         name: 'Home',
         icon: <Home />,
         position: { x: 50, y: 80 },
-        side: 'bottom',
+        side: 'left',
         building: {
           type: 'dock',
           color: 'bg-gradient-to-t from-slate-700 to-slate-500',
