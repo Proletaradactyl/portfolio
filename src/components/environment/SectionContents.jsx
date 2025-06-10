@@ -1,5 +1,6 @@
 import { Github, Linkedin, MailIcon } from 'lucide-react';
-import FullStackMastery from '../../assets/FullStackMastery.png'; // Local JPG for certificates
+import CertificateCarousel from './CertificateCarousel'; // <-- Add this import
+//import FullStackMastery from '../../assets/FullStackMastery.png'; // Keep for other uses
 
 // Render modal content for each section, with error boundary
 const renderSectionContent = (section) => {
@@ -214,19 +215,7 @@ const renderSectionContent = (section) => {
           </div>
         </div>
       ),
-      certificates: (
-        <div className='bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl border border-gray-200 max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col items-center'>
-          <h2 className='text-3xl font-bold mb-6 text-pink-700'> My Certificates</h2>
-          <img
-            src={FullStackMastery}
-            alt='My certificates'
-            className='rounded-lg shadow-md max-h-[70vh] w-auto mb-6'
-          />
-          <p className='text-sm text-gray-600'>
-            Click through arrows to see different certificates earned for skills I've learned!
-          </p>
-        </div>
-      ),
+      certificates: <CertificateCarousel />, // Use the new component here
     };
     return sectionContents[section] || null;
   } catch (e) {
