@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import FullStackMastery from '../../assets/FullStackMastery.png';
-// import AnotherCertificate from '../../assets/AnotherCertificate.png'; // Add more as needed
+const assetContext = require.context('../../assets/certs', false, /\.png$/i);
 
-const certificateImages = [
-  {
-    src: FullStackMastery,
-    alt: 'Full Stack Mastery Certificate',
-    label: 'Full Stack Mastery',
-  },
-  // { src: AnotherCertificate, alt: 'Another Certificate', label: 'Another Skill' },
-];
+const certificateImages = assetContext.keys().map((assetPath) => {
+  const fileName = assetPath.split('/').pop().replace(/\.png$/i, '');
+  const label = fileName
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  return {
+    src: assetContext(assetPath),
+    alt: `${label} image`,
+    label,
+  };
+});
 
 const CertificateCarousel = () => {
   const [current, setCurrent] = useState(0);

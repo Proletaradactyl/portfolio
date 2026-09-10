@@ -69,7 +69,7 @@ const renderSectionContent = (section) => {
           <div className='space-y-4'>
             <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
               <a
-                href='https://app.netlify.com/projects/sage-panda-abf549/' // <-- Replace with your actual project URL
+                href='https://kara-g-portfolio.netlify.app/' // <-- Replace with your actual project URL
                 target='_blank'
                 rel='noopener noreferrer'
                 className='block w-fit'
@@ -93,10 +93,16 @@ const renderSectionContent = (section) => {
               </div>
             </div>
             <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
-              <h3 className='font-semibold text-lg text-green-600'>Pending</h3>
-              <p className='text-sm text-gray-600 mb-2'>Pending</p>
+              <a
+                href='https://chelseyhockettforcongress.com/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='block w-fit'
+              >
+              <h3 className='font-semibold text-lg text-green-600'>⚖️ Chelsey Hockett For Congress</h3>
+              <p className='text-sm text-gray-600 mb-2'>Dynamic HTML Campaign Website</p>
               <div className='flex flex-wrap gap-1'>
-                {['JavaScript', 'API Integration', 'Chart.js'].map((tech) => (
+                {['HTML', 'JavaScript', 'API Integration', 'Backend Storage'].map((tech) => (
                   <span
                     key={tech}
                     className='px-2 py-1 bg-green-100 text-xs rounded'
@@ -105,8 +111,9 @@ const renderSectionContent = (section) => {
                   </span>
                 ))}
               </div>
+              </a>
             </div>
-            <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
+ {/*           <div className='border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow'>
               <h3 className='font-semibold text-lg text-purple-600'>Pending</h3>
               <p className='text-sm text-gray-600 mb-2'>Pending</p>
               <div className='flex flex-wrap gap-1'>
@@ -118,8 +125,8 @@ const renderSectionContent = (section) => {
                     {tech}
                   </span>
                 ))}
-              </div>
-            </div>
+              </div> 
+            </div> */}
           </div>
         </div>
       ),
