@@ -37,7 +37,7 @@ const renderSectionContent = (section) => {
                 Frontend
               </h3>
               <div className='space-y-2'>
-                {['HTML/CSS', 'JavaScript', 'React', 'Tailwind CSS'].map(
+                {['HTML/CSS', 'JavaScript', 'React', 'Tailwind CSS', 'Wordpress', 'GoDaddy', 'Squarespace'].map(
                   (skill) => (
                     <div key={skill} className='flex items-center'>
                       <div className='w-2 h-2 bg-blue-500 rounded-full mr-2'></div>
